@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Ridee
+        {% endblock %}
+    </title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    brand: {
+                        DEFAULT: '#FFD60A',
+                        hover: '#E5C009',
+                        light: '#FFF6CC',
+                    },
+
+                    dark: {
+                        950: '#09090b',
+                        900: '#18181b',
+                        800: '#27272a',
+                    },
+                },
+
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    display: ['Outfit', 'sans-serif'],
+                },
+
+                boxShadow: {
+                    'glow': '0 0 20px rgba(255, 214, 10, 0.15)',
+                    'card': '0 8px 32px rgba(0, 0, 0, 0.4)',
+                }
+            }
+        }
+      }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+    body {
+        background-color: #050505;
+        color: white;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .glass-panel {
+        background: rgba(24, 24, 27, 0.85);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .input-dark {
+        background: rgba(39, 39, 42, 0.6);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: white;
+        transition: all 0.2s;
+    }
+
+    .input-dark option {
+        background: #18181b;
+        color: #ffffff;
+    }
+
+    .input-dark::file-selector-button {
+        margin-right: 1rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background: #FFD60A;
+        color: #09090b;
+        font-weight: 700;
+        padding: 0.5rem 0.9rem;
+        cursor: pointer;
+    }
+
+    .input-dark:focus {
+        border-color: #FFD60A;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(255, 214, 10, 0.2);
+    }
+
+    </style>
+
+</head>
+
+<body class="bg-[#050505]">
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-64 bg-dark-900 border-r border-white/5 p-6">
+
+    <!-- LOGO -->
+    <a href="{% url 'home' %}" class="flex items-center gap-3 mb-10 group">
+
+        <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-glow">
+            <i data-lucide="car-taxi-front" class="text-dark-950 w-6 h-6"></i>
+        </div>
+
+        <h1 class="font-display text-2xl font-bold tracking-tight text-white group-hover:text-brand transition">
+            Ridee
+        </h1>
+
+    </a>
+
+    <!-- NAVIGATION -->
+    <nav class="flex-1 space-y-2">
+
+        <a href="/"
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'home' %}bg-brand text-dark-950{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+
+            <i data-lucide="house" class="w-5 h-5"></i>
+
+            <span>Главная</span>
+
+        </a>
+
+        <a href="/orders/"
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}bg-brand text-dark-950{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+
+            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+
+            <span>Заказы</span>
+
+        </a>
+
+    </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-8">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

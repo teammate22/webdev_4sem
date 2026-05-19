@@ -1,0 +1,19 @@
+<h1>Список заказов</h1>
+
+<a href="{% url 'order_create' %}">Создать заказ</a>
+
+<ul>
+
+{% for order in orders %}
+
+<li>
+
+<a href="{% url 'order_detail' order.id %}">
+Заказ №{{ order.id }}
+</a>
+
+</li>
+
+{% endfor %}
+
+</ul>

@@ -1,0 +1,112 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center justify-between mb-8">
+
+        <div>
+
+            <h1 class="text-4xl font-display font-bold mb-2">
+                {{ title }}
+            </h1>
+
+            <p class="text-gray-400">
+                Заполните маршрут, параметры поездки и дополнительные услуги
+            </p>
+
+        </div>
+
+        <a href="{% url 'orders_list' %}"
+           class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition">
+            Назад
+        </a>
+
+    </div>
+
+    <form method="post"
+          enctype="multipart/form-data"
+          class="glass-panel p-8 rounded-3xl shadow-card">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {% for field in form %}
+
+            <div class="{% if field.name == 'services' or field.name == 'receipt' %}md:col-span-2{% endif %}">
+
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    {{ field.label }}
+                </label>
+
+                {% if field.name == 'services' %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                    {% for choice in field %}
+
+                    <label class="flex items-center gap-3 rounded-2xl bg-dark-800/80 border border-white/10 px-4 py-3 hover:border-brand/50 transition cursor-pointer">
+                        {{ choice.tag }}
+                        <span class="text-sm text-gray-200">
+                            {{ choice.choice_label }}
+                        </span>
+                    </label>
+
+                    {% empty %}
+
+                    <p class="text-gray-400">
+                        Дополнительные услуги пока не добавлены
+                    </p>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                {{ field }}
+
+                {% endif %}
+
+                {% if field.help_text %}
+                <p class="text-gray-500 text-sm mt-2">
+                    {{ field.help_text }}
+                </p>
+                {% endif %}
+
+                {% if field.errors %}
+                <p class="text-red-400 text-sm mt-2">
+                    {{ field.errors }}
+                </p>
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <button type="submit"
+                class="mt-8 w-full bg-brand text-dark-950 py-4 rounded-2xl font-bold hover:bg-brand-hover transition shadow-glow">
+
+            Сохранить
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Заказ №{{ order.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-between items-center mb-10">
+
+    <div>
+
+        <h1 class="text-4xl font-display font-bold mb-2">
+            Заказ №{{ order.id }}
+        </h1>
+
+        <p class="text-gray-400">
+            Подробная информация о поездке
+        </p>
+
+    </div>
+
+    <div class="flex gap-3">
+
+        <a href="{% url 'order_pdf' order.id %}"
+          class="px-5 py-3 rounded-2xl bg-green-500/20 hover:bg-green-500/30 transition">
+
+            Скачать PDF
+
+        </a>
+
+        <a href="{% url 'order_update' order.id %}"
+           class="px-5 py-3 rounded-2xl bg-blue-500/20 hover:bg-blue-500/30 transition">
+
+            Изменить
+
+        </a>
+
+        <a href="{% url 'order_delete' order.id %}"
+           class="px-5 py-3 rounded-2xl bg-red-500/20 hover:bg-red-500/30 transition">
+
+            Удалить
+
+        </a>
+
+    </div>
+
+</div>
+
+<div class="grid grid-cols-2 gap-6">
+
+    <!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
+    <div class="glass-panel p-8 rounded-3xl shadow-card">
+
+        <h2 class="text-2xl font-bold mb-6">
+            Информация о заказе
+        </h2>
+
+        <div class="space-y-4">
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Клиент
+                </p>
+
+                <p class="text-xl">
+                    {{ order.client.username }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Адрес отправления
+                </p>
+
+                <p class="text-xl">
+                    {{ order.from_address }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Адрес назначения
+                </p>
+
+                <p class="text-xl">
+                    {{ order.to_address }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Стоимость
+                </p>
+
+                <p class="text-3xl font-bold text-brand">
+                    {{ order.price }} ₽
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Тариф
+                </p>
+
+                <p class="text-xl">
+                    {{ order.tariff }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Статус
+                </p>
+
+                <p class="text-xl">
+                    {{ order.status }}
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500 text-sm mb-1">
+                    Чек
+                </p>
+
+                {% if order.receipt %}
+
+                <a href="{{ order.receipt.url }}"
+                   class="inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-brand hover:bg-white/20 transition"
+                   target="_blank">
+
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Открыть чек</span>
+
+                </a>
+
+                {% else %}
+
+                <p class="text-gray-400">
+                    Чек не загружен
+                </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ВОДИТЕЛЬ И УСЛУГИ -->
+    <div class="space-y-6">
+
+        <!-- ВОДИТЕЛЬ -->
+        <div class="glass-panel p-8 rounded-3xl shadow-card">
+
+            <h2 class="text-2xl font-bold mb-6">
+                Водитель
+            </h2>
+
+            {% if order.driver %}
+
+            <div class="space-y-4">
+
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">
+                        Имя
+                    </p>
+
+                    <p class="text-xl">
+                        {{ order.driver.user.username }}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">
+                        Рейтинг
+                    </p>
+
+                    <p class="text-xl">
+                        ⭐ {{ order.driver.rating }}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">
+                        Статус
+                    </p>
+
+                    <p class="text-xl">
+                        {{ order.driver.status }}
+                    </p>
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <p class="text-gray-400">
+                Водитель не назначен
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        <!-- УСЛУГИ -->
+        <div class="glass-panel p-8 rounded-3xl shadow-card">
+
+            <h2 class="text-2xl font-bold mb-6">
+                Дополнительные услуги
+            </h2>
+
+            <div class="space-y-3">
+
+                {% for service in order.services.all %}
+
+                <div class="bg-dark-800 p-4 rounded-2xl flex justify-between items-center">
+
+                    <span class="text-lg">
+                        {{ service.name }}
+                    </span>
+
+                    <span class="text-brand font-bold">
+                        {{ service.price }} ₽
+                    </span>
+
+                </div>
+
+                {% empty %}
+
+                <p class="text-gray-400">
+                    Услуг нет
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
