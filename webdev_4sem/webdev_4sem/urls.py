@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from core import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -27,7 +27,19 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
+    path('accounts/', include('allauth.urls')),
+
+    path('silk/', include('silk.urls', namespace='silk')),
+
+    path('api/', include('core.api.urls')),
+
     path('orders/', views.orders_list, name='orders_list'),
+
+    path('drivers/', views.drivers_list, name='drivers_list'),
+
+    path('services/', views.services_list, name='services_list'),
+
+    path('tariffs/', views.tariffs_list, name='tariffs_list'),
 
     path('orders/create/', views.order_create, name='order_create'),
 

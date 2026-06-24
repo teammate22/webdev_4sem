@@ -30,19 +30,28 @@
 </div>
 
 <form method="get"
-      class="glass-panel p-4 rounded-3xl shadow-card mb-8">
+      class="glass-panel p-4 rounded-3xl shadow-card mb-8"
+      role="search"
+      aria-label="Поиск заказов">
 
     <div class="flex flex-col md:flex-row gap-3">
 
         <div class="relative flex-1">
 
             <i data-lucide="search"
+               aria-hidden="true"
                class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"></i>
 
+            <label for="orders-search" class="sr-only">
+                Поиск по адресу, клиенту, водителю, тарифу или статусу
+            </label>
+
             <input type="text"
+                   id="orders-search"
                    name="q"
                    value="{{ query }}"
                    placeholder="Поиск по адресу, клиенту, водителю, тарифу или статусу"
+                   aria-describedby="orders-search-help"
                    class="input-dark w-full rounded-2xl py-4 pl-12 pr-4">
 
         </div>
@@ -61,10 +70,14 @@
 
     </div>
 
+    <p id="orders-search-help" class="sr-only">
+        Введите текст и нажмите Найти. Поиск выполняется без учёта регистра.
+    </p>
+
 </form>
 
 {% if query %}
-<p class="text-gray-400 mb-5">
+<p class="text-gray-400 mb-5" role="status">
     Результаты поиска по запросу:
     <span class="text-brand font-semibold">
         {{ query }}

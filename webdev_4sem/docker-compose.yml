@@ -1,0 +1,79 @@
+services:
+  django:
+    build: .
+    container_name: ridee_django
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "127.0.0.1,localhost,0.0.0.0"
+      SQLITE_PATH: "/app/data/db.sqlite3"
+      EMAIL_HOST: "mailhog"
+      EMAIL_PORT: "1025"
+      DEFAULT_FROM_EMAIL: "Ridee <noreply@ridee.local>"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      GOOGLE_OAUTH_CLIENT_ID: "${GOOGLE_OAUTH_CLIENT_ID:-}"
+      GOOGLE_OAUTH_CLIENT_SECRET: "${GOOGLE_OAUTH_CLIENT_SECRET:-}"
+    volumes:
+      - sqlite_data:/app/data
+      - media_data:/app/media
+    depends_on:
+      - mailhog
+      - redis
+
+  celery_worker:
+    build: .
+    container_name: ridee_celery_worker
+    command: celery -A webdev_4sem worker --loglevel=info
+    environment:
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "127.0.0.1,localhost,0.0.0.0"
+      SQLITE_PATH: "/app/data/db.sqlite3"
+      EMAIL_HOST: "mailhog"
+      EMAIL_PORT: "1025"
+      DEFAULT_FROM_EMAIL: "Ridee <noreply@ridee.local>"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    volumes:
+      - sqlite_data:/app/data
+      - media_data:/app/media
+    depends_on:
+      - redis
+
+  celery_beat:
+    build: .
+    container_name: ridee_celery_beat
+    command: celery -A webdev_4sem beat --loglevel=info
+    environment:
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "127.0.0.1,localhost,0.0.0.0"
+      SQLITE_PATH: "/app/data/db.sqlite3"
+      EMAIL_HOST: "mailhog"
+      EMAIL_PORT: "1025"
+      DEFAULT_FROM_EMAIL: "Ridee <noreply@ridee.local>"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    volumes:
+      - sqlite_data:/app/data
+      - media_data:/app/media
+    depends_on:
+      - redis
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ridee_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  redis:
+    image: redis:7-alpine
+    container_name: ridee_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  sqlite_data:
+  media_data:

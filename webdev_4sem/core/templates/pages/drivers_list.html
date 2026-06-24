@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Водители
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-10">
+    <h1 class="text-4xl font-display font-bold mb-2">Водители</h1>
+    <p class="text-gray-400">Рейтинг, статус, автомобили и количество заказов</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    {% for driver in drivers %}
+
+    <article id="driver-{{ driver.id }}" class="glass-panel p-6 rounded-3xl shadow-card">
+
+        <div class="flex gap-5">
+
+            <div class="w-20 h-20 rounded-2xl bg-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                {% for car in driver.car_set.all %}
+                    {% if forloop.first %}
+                        {% for photo in car.image_set.all %}
+                            {% if forloop.first %}
+                            <img src="{{ photo.image.url }}" alt="{{ car }}" class="w-full h-full object-cover">
+                            {% endif %}
+                        {% empty %}
+                        <i data-lucide="car" class="w-9 h-9 text-gray-500" aria-hidden="true"></i>
+                        {% endfor %}
+                    {% endif %}
+                {% empty %}
+                <i data-lucide="car" class="w-9 h-9 text-gray-500" aria-hidden="true"></i>
+                {% endfor %}
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold mb-2">{{ driver }}</h2>
+                <p class="text-gray-400 mb-1">Никнейм: {{ driver.user.username }}</p>
+                <p class="text-gray-400 mb-1">Статус: {{ driver.status }}</p>
+                <p class="text-brand font-bold">Рейтинг: {{ driver.rating }}</p>
+            </div>
+
+            <div class="text-right shrink-0">
+                <p class="text-gray-500 text-sm">Заказов</p>
+                <p class="text-3xl font-bold text-brand">{{ driver.order_count }}</p>
+            </div>
+
+        </div>
+
+        <div class="mt-5 space-y-2">
+            {% for car in driver.car_set.all %}
+            <div class="bg-dark-800 rounded-2xl px-4 py-3 flex justify-between gap-3">
+                <span>{{ car.brand }} {{ car.model }}</span>
+                <span class="text-gray-400">{{ car.number }}</span>
+            </div>
+            {% empty %}
+            <p class="text-gray-400">Автомобиль не указан</p>
+            {% endfor %}
+        </div>
+
+    </article>
+
+    {% empty %}
+
+    <div class="glass-panel p-8 rounded-3xl text-center lg:col-span-2">
+        <p class="text-gray-400 text-xl">Водителей пока нет</p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Услуги
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-10">
+    <h1 class="text-4xl font-display font-bold mb-2">Дополнительные услуги</h1>
+    <p class="text-gray-400">Список услуг и частота использования в заказах</p>
+</div>
+
+<div class="space-y-4">
+
+    {% for service in services %}
+
+    <article id="service-{{ service.id }}" class="glass-panel p-6 rounded-3xl shadow-card flex items-center gap-5">
+
+        <div class="w-12 h-12 rounded-2xl bg-brand text-dark-950 flex items-center justify-center font-bold shrink-0">
+            {{ forloop.counter }}
+        </div>
+
+        <div class="flex-1">
+            <h2 class="text-2xl font-bold mb-1">{{ service.name }}</h2>
+            <p class="text-gray-400">Использований в заказах: {{ service.order_count }}</p>
+        </div>
+
+        <p class="text-3xl font-bold text-brand">{{ service.price }} ₽</p>
+
+    </article>
+
+    {% empty %}
+
+    <div class="glass-panel p-8 rounded-3xl text-center">
+        <p class="text-gray-400 text-xl">Услуг пока нет</p>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

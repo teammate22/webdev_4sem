@@ -52,6 +52,9 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 
@@ -61,6 +64,47 @@
         background-color: #050505;
         color: white;
         font-family: 'Inter', sans-serif;
+    }
+
+    .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        z-index: 100;
+        transform: translateY(-150%);
+        background: #FFD60A;
+        color: #09090b;
+        border-radius: 0.75rem;
+        font-weight: 700;
+        padding: 0.75rem 1rem;
+        transition: transform 0.2s;
+    }
+
+    .skip-link:focus {
+        transform: translateY(0);
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 3px solid #FFD60A;
+        outline-offset: 3px;
     }
 
     .glass-panel {
@@ -98,21 +142,253 @@
         box-shadow: 0 0 0 2px rgba(255, 214, 10, 0.2);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    [v-cloak] {
+        display: none;
+    }
+
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 7mm;
+        }
+
+        * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        html,
+        body {
+            background: #ffffff !important;
+            color: #111827 !important;
+            font-size: 8.5pt !important;
+            line-height: 1.18 !important;
+        }
+
+        aside,
+        nav,
+        script,
+        button,
+        form,
+        [data-lucide],
+        #ridee-vue-calculator,
+        .skip-link,
+        .md\:hidden,
+        a[href*="/edit/"],
+        a[href*="/delete/"],
+        a[href*="/pdf/"],
+        a[href*="/create/"] {
+            display: none !important;
+        }
+
+        main {
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+
+        .flex.min-h-screen {
+            display: block !important;
+            min-height: auto !important;
+        }
+
+        .glass-panel,
+        .bg-dark-800,
+        .bg-dark-900,
+        .bg-white\/10,
+        .bg-dark-800\/80,
+        .bg-red-500\/20,
+        .bg-blue-500\/20,
+        .bg-green-500\/20 {
+            background: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            color: #111827 !important;
+        }
+
+        .rounded-3xl,
+        .rounded-2xl,
+        .rounded-xl {
+            border-radius: 0 !important;
+        }
+
+        .text-white,
+        .text-gray-200,
+        .text-gray-300,
+        .text-gray-400,
+        .text-gray-500,
+        .text-brand,
+        .text-red-100,
+        .text-red-300,
+        .text-blue-500,
+        .text-dark-950 {
+            color: #111827 !important;
+        }
+
+        a {
+            color: #111827 !important;
+            text-decoration: none !important;
+        }
+
+        a[href]::after {
+            content: "";
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #111827 !important;
+            page-break-after: avoid;
+            margin-top: 0 !important;
+        }
+
+        section,
+        article,
+        .glass-panel,
+        li {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .grid {
+            display: grid !important;
+            gap: 6pt !important;
+        }
+
+        .grid-cols-1,
+        .grid-cols-2,
+        .grid-cols-3,
+        .md\:grid-cols-2,
+        .md\:grid-cols-3,
+        .lg\:grid-cols-2,
+        .xl\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        .grid > *,
+        .space-y-5 > *,
+        .space-y-4 > * {
+            margin-bottom: 4pt !important;
+        }
+
+        .text-5xl,
+        .text-4xl,
+        .text-3xl,
+        .text-2xl {
+            font-size: 11pt !important;
+            line-height: 1.15 !important;
+        }
+
+        .text-xl,
+        .text-lg {
+            font-size: 9pt !important;
+            line-height: 1.15 !important;
+        }
+
+        .p-8,
+        .p-6,
+        .p-5,
+        .p-4 {
+            padding: 5pt !important;
+        }
+
+        .mb-10,
+        .mb-8,
+        .mb-6,
+        .mb-5,
+        .mb-4,
+        .mb-3,
+        .mb-2 {
+            margin-bottom: 4pt !important;
+        }
+
+        .mt-5,
+        .mt-4,
+        .mt-3,
+        .mt-2,
+        .mt-1 {
+            margin-top: 3pt !important;
+        }
+
+        .gap-6,
+        .gap-5,
+        .gap-4,
+        .gap-3 {
+            gap: 5pt !important;
+        }
+
+        .space-y-6,
+        .space-y-5,
+        .space-y-4,
+        .space-y-3,
+        .space-y-2 {
+            display: block !important;
+        }
+
+        .space-y-6 > *,
+        .space-y-5 > *,
+        .space-y-4 > *,
+        .space-y-3 > *,
+        .space-y-2 > * {
+            margin-top: 0 !important;
+            margin-bottom: 4pt !important;
+        }
+
+        img {
+            max-width: 38pt !important;
+            max-height: 38pt !important;
+            object-fit: cover !important;
+            filter: grayscale(100%);
+        }
+
+        ol,
+        ul,
+        p {
+            margin-top: 0 !important;
+            margin-bottom: 3pt !important;
+        }
+
+        .rounded-3xl,
+        .rounded-2xl,
+        .rounded-xl {
+            border-radius: 0 !important;
+        }
+
+        .max-w-2xl,
+        .max-w-4xl {
+            max-width: none !important;
+        }
+    }
+
     </style>
 
 </head>
 
 <body class="bg-[#050505]">
 
+<a href="#main-content" class="skip-link">
+    Перейти к основному содержимому
+</a>
+
 <div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
-    <aside class="hidden md:flex flex-col w-64 bg-dark-900 border-r border-white/5 p-6">
+    <aside class="hidden md:flex flex-col w-64 bg-dark-900 border-r border-white/5 p-6" aria-label="Боковая панель">
 
     <!-- LOGO -->
     <a href="{% url 'home' %}" class="flex items-center gap-3 mb-10 group">
 
-        <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-glow">
+        <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-glow" aria-hidden="true">
             <i data-lucide="car-taxi-front" class="text-dark-950 w-6 h-6"></i>
         </div>
 
@@ -123,23 +399,55 @@
     </a>
 
     <!-- NAVIGATION -->
-    <nav class="flex-1 space-y-2">
+    <nav class="flex-1 space-y-2" aria-label="Основная навигация">
 
         <a href="/"
-           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'home' %}bg-brand text-dark-950{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+           {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'home' %}bg-brand text-dark-950{% else %}text-gray-300 hover:text-white hover:bg-white/5{% endif %}">
 
-            <i data-lucide="house" class="w-5 h-5"></i>
+            <i data-lucide="house" class="w-5 h-5" aria-hidden="true"></i>
 
             <span>Главная</span>
 
         </a>
 
         <a href="/orders/"
-           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}bg-brand text-dark-950{% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+           {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}aria-current="page"{% endif %}
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}bg-brand text-dark-950{% else %}text-gray-300 hover:text-white hover:bg-white/5{% endif %}">
 
-            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+            <i data-lucide="clipboard-list" class="w-5 h-5" aria-hidden="true"></i>
 
             <span>Заказы</span>
+
+        </a>
+
+        <a href="{% url 'drivers_list' %}"
+           {% if request.resolver_match.url_name == 'drivers_list' %}aria-current="page"{% endif %}
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'drivers_list' %}bg-brand text-dark-950{% else %}text-gray-300 hover:text-white hover:bg-white/5{% endif %}">
+
+            <i data-lucide="badge" class="w-5 h-5" aria-hidden="true"></i>
+
+            <span>Водители</span>
+
+        </a>
+
+        <a href="{% url 'services_list' %}"
+           {% if request.resolver_match.url_name == 'services_list' %}aria-current="page"{% endif %}
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'services_list' %}bg-brand text-dark-950{% else %}text-gray-300 hover:text-white hover:bg-white/5{% endif %}">
+
+            <i data-lucide="sparkles" class="w-5 h-5" aria-hidden="true"></i>
+
+            <span>Услуги</span>
+
+        </a>
+
+        <a href="{% url 'tariffs_list' %}"
+           {% if request.resolver_match.url_name == 'tariffs_list' %}aria-current="page"{% endif %}
+           class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all {% if request.resolver_match.url_name == 'tariffs_list' %}bg-brand text-dark-950{% else %}text-gray-300 hover:text-white hover:bg-white/5{% endif %}">
+
+            <i data-lucide="badge-russian-ruble" class="w-5 h-5" aria-hidden="true"></i>
+
+            <span>Тарифы</span>
 
         </a>
 
@@ -147,8 +455,47 @@
 
     </aside>
 
+    <div class="md:hidden border-b border-white/10 bg-dark-900 p-4">
+
+        <a href="{% url 'home' %}" class="flex items-center gap-3 mb-4">
+            <span class="w-9 h-9 bg-brand rounded-xl flex items-center justify-center" aria-hidden="true">
+                <i data-lucide="car-taxi-front" class="text-dark-950 w-5 h-5"></i>
+            </span>
+            <span class="font-display text-xl font-bold text-white">Ridee</span>
+        </a>
+
+        <nav class="grid grid-cols-2 gap-2" aria-label="Мобильная навигация">
+            <a href="{% url 'home' %}"
+               {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}
+               class="px-3 py-2 rounded-xl text-sm font-medium {% if request.resolver_match.url_name == 'home' %}bg-brand text-dark-950{% else %}bg-white/5 text-gray-200{% endif %}">
+                Главная
+            </a>
+            <a href="{% url 'orders_list' %}"
+               {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}aria-current="page"{% endif %}
+               class="px-3 py-2 rounded-xl text-sm font-medium {% if request.resolver_match.url_name == 'orders_list' or request.resolver_match.url_name == 'order_create' or request.resolver_match.url_name == 'order_detail' or request.resolver_match.url_name == 'order_update' or request.resolver_match.url_name == 'order_delete' or request.resolver_match.url_name == 'order_pdf' %}bg-brand text-dark-950{% else %}bg-white/5 text-gray-200{% endif %}">
+                Заказы
+            </a>
+            <a href="{% url 'drivers_list' %}"
+               {% if request.resolver_match.url_name == 'drivers_list' %}aria-current="page"{% endif %}
+               class="px-3 py-2 rounded-xl text-sm font-medium {% if request.resolver_match.url_name == 'drivers_list' %}bg-brand text-dark-950{% else %}bg-white/5 text-gray-200{% endif %}">
+                Водители
+            </a>
+            <a href="{% url 'services_list' %}"
+               {% if request.resolver_match.url_name == 'services_list' %}aria-current="page"{% endif %}
+               class="px-3 py-2 rounded-xl text-sm font-medium {% if request.resolver_match.url_name == 'services_list' %}bg-brand text-dark-950{% else %}bg-white/5 text-gray-200{% endif %}">
+                Услуги
+            </a>
+            <a href="{% url 'tariffs_list' %}"
+               {% if request.resolver_match.url_name == 'tariffs_list' %}aria-current="page"{% endif %}
+               class="px-3 py-2 rounded-xl text-sm font-medium {% if request.resolver_match.url_name == 'tariffs_list' %}bg-brand text-dark-950{% else %}bg-white/5 text-gray-200{% endif %}">
+                Тарифы
+            </a>
+        </nav>
+
+    </div>
+
     <!-- MAIN CONTENT -->
-    <main class="flex-1 p-8">
+    <main id="main-content" class="flex-1 p-8" tabindex="-1">
 
         {% block content %}
         {% endblock %}
@@ -160,6 +507,9 @@
 <script>
     lucide.createIcons();
 </script>
+
+{% block scripts %}
+{% endblock %}
 
 </body>
 </html>

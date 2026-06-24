@@ -1,18 +1,26 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from .models import Order, Driver
+from .models import Order, Driver, Service, Tariff
 from django.db.models import Count, Avg, Sum, Q
 from .forms import OrderForm
 from django.core.cache import cache
 from django.db.models import F
 from reportlab.pdfgen import canvas
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from pathlib import Path
 
 # contains/icontains
-def search_orders(request):
+def search_orders(request: HttpRequest) -> HttpResponse:
+    """
+    Ищет заказы по адресу отправления.
+
+    Args:
+        request: HTTP-запрос с GET-параметром q.
+    Returns:
+        HttpResponse: Страница со списком найденных заказов.
+    """
 
     query = request.GET.get('q')
 
@@ -26,20 +34,44 @@ def search_orders(request):
     # Order.objects.filter(from_address__icontains="москва") - поиск без учёта регистра
 
 # values() и values_list()
-def orders_values(request):
+def orders_values(request: HttpRequest) -> HttpResponse:
+    """
+    Демонстрирует получение словарей через values().
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Тестовая страница с данными заказов.
+    """
 
     data = Order.objects.values('id', 'price')
 
     return render(request, 'test.html', {'data': data})
 
-def orders_values_list(request):
+def orders_values_list(request: HttpRequest) -> HttpResponse:
+    """
+    Демонстрирует получение кортежей через values_list().
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Тестовая страница с данными заказов.
+    """
 
     data = Order.objects.values_list('id', 'price')
 
     return render(request, 'test.html', {'data': data})
 
 # count(), exists(), update(), delete()
-def test_queries(request):
+def test_queries(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает безопасные тестовые ORM-запросы.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Тестовая страница с количеством заказов.
+    """
 
     count = Order.objects.count()
 
@@ -57,7 +89,15 @@ def test_queries(request):
     })
 
 # кеширование данных
-def orders_cached(request):
+def orders_cached(request: HttpRequest) -> HttpResponse:
+    """
+    Возвращает список заказов с использованием локального кеша.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница со списком заказов.
+    """
     orders = cache.get('orders_list')
 
     if not orders:
@@ -67,11 +107,29 @@ def orders_cached(request):
     return render(request, 'orders_list.html', {'orders': orders})
 
 # F-выражение
-def increase_driver_rating(request, driver_id):
+def increase_driver_rating(request: HttpRequest, driver_id: int) -> HttpResponse:
+    """
+    Увеличивает рейтинг водителя через F-выражение.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        driver_id: Идентификатор водителя.
+    Returns:
+        HttpResponse: Редирект на список водителей.
+    """
     Driver.objects.filter(id=driver_id).update(rating=F('rating') + 1)
     return redirect('drivers_list')
 
-def user_orders_view(request, user_id):
+def user_orders_view(request: HttpRequest, user_id: int) -> HttpResponse:
+    """
+    Показывает заказы конкретного пользователя.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        user_id: Идентификатор пользователя.
+    Returns:
+        HttpResponse: Страница с заказами пользователя.
+    """
     user = get_object_or_404(User, id=user_id)
 
     # related_name использование
@@ -80,7 +138,15 @@ def user_orders_view(request, user_id):
     return render(request, 'orders.html', {'orders': orders})
 
 
-def filtered_orders_view(request):
+def filtered_orders_view(request: HttpRequest) -> HttpResponse:
+    """
+    Демонстрирует фильтрацию, исключение и сортировку заказов.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница с отфильтрованными заказами.
+    """
 
     # lookup-выражение (пример использования __)
     orders = Order.objects.filter(price__gt=1000)
@@ -96,7 +162,15 @@ def filtered_orders_view(request):
 
     return render(request, 'orders.html', {'orders': orders})
 
-def aggregation_view(request):
+def aggregation_view(request: HttpRequest) -> HttpResponse:
+    """
+    Демонстрирует агрегатные запросы по водителям и заказам.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница со статистикой.
+    """
 
     # 1. Количество заказов у водителей
     drivers = Driver.objects.annotate(order_count=Count('order'))
@@ -116,7 +190,15 @@ def aggregation_view(request):
     })
 
 # CRUD операции для модели Order
-def orders_list(request):
+def orders_list(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает список заказов и выполняет поиск по связанным данным.
+
+    Args:
+        request: HTTP-запрос с необязательным GET-параметром q.
+    Returns:
+        HttpResponse: Страница списка заказов.
+    """
 
     query = request.GET.get('q', '').strip()
 
@@ -158,7 +240,15 @@ def orders_list(request):
         'query': query,
     })
 
-def order_create(request):
+def order_create(request: HttpRequest) -> HttpResponse:
+    """
+    Создаёт новый заказ через HTML-форму.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница формы или редирект на созданный заказ.
+    """
 
     if request.method == "POST":
 
@@ -177,7 +267,16 @@ def order_create(request):
     })
 
 
-def order_update(request, pk):
+def order_update(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Редактирует существующий заказ через HTML-форму.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        pk: Идентификатор заказа.
+    Returns:
+        HttpResponse: Страница формы или редирект на обновлённый заказ.
+    """
 
     order = get_object_or_404(Order, pk=pk)
 
@@ -198,7 +297,16 @@ def order_update(request, pk):
     })
 
 
-def order_delete(request, pk):
+def order_delete(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Удаляет заказ после подтверждения.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        pk: Идентификатор заказа.
+    Returns:
+        HttpResponse: Страница подтверждения или редирект на список заказов.
+    """
     order = get_object_or_404(Order, pk=pk)
 
     if request.method == "POST":
@@ -209,7 +317,15 @@ def order_delete(request, pk):
 
 # frontend
 
-def home(request):
+def home(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает главную страницу с виджетами и статистикой.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Главная страница проекта.
+    """
 
     orders_count = Order.objects.count()
 
@@ -222,8 +338,35 @@ def home(request):
     latest_orders = Order.objects.select_related(
         'client',
         'driver',
-        'status'
+        'status',
+        'tariff'
     ).order_by('-created_at')[:5]
+
+    top_drivers = Driver.objects.select_related(
+        'user'
+    ).prefetch_related(
+        'car_set__image_set'
+    ).annotate(
+        order_count=Count('order')
+    ).order_by('-rating', '-order_count')[:5]
+
+    popular_services = Service.objects.annotate(
+        order_count=Count('orderservice')
+    ).order_by('-order_count', 'name')[:5]
+
+    popular_tariffs = Tariff.objects.annotate(
+        order_count=Count('order'),
+        total_income=Sum('order__price')
+    ).order_by('-order_count', 'name')[:5]
+
+    tariff_options = [
+        {
+            'id': tariff.id,
+            'name': tariff.name,
+            'price': float(tariff.price),
+        }
+        for tariff in Tariff.objects.order_by('price')
+    ]
 
     return render(request, 'pages/home.html', {
 
@@ -233,11 +376,90 @@ def home(request):
 
         'avg_price': round(avg_price or 0, 2),
 
-        'latest_orders': latest_orders
+        'latest_orders': latest_orders,
+
+        'top_drivers': top_drivers,
+
+        'popular_services': popular_services,
+
+        'popular_tariffs': popular_tariffs,
+
+        'tariff_options': tariff_options,
     })
 
 
-def order_detail(request, pk):
+def drivers_list(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает список водителей с рейтингом и количеством заказов.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница списка водителей.
+    """
+
+    drivers = Driver.objects.select_related(
+        'user'
+    ).prefetch_related(
+        'car_set__image_set'
+    ).annotate(
+        order_count=Count('order')
+    ).order_by('-rating', '-order_count')
+
+    return render(request, 'pages/drivers_list.html', {
+        'drivers': drivers
+    })
+
+
+def services_list(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает список дополнительных услуг.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница списка услуг.
+    """
+
+    services = Service.objects.annotate(
+        order_count=Count('orderservice')
+    ).order_by('-order_count', 'name')
+
+    return render(request, 'pages/services_list.html', {
+        'services': services
+    })
+
+
+def tariffs_list(request: HttpRequest) -> HttpResponse:
+    """
+    Показывает список тарифов и статистику по заказам.
+
+    Args:
+        request: HTTP-запрос пользователя.
+    Returns:
+        HttpResponse: Страница списка тарифов.
+    """
+
+    tariffs = Tariff.objects.annotate(
+        order_count=Count('order'),
+        total_income=Sum('order__price')
+    ).order_by('-order_count', 'name')
+
+    return render(request, 'pages/tariffs_list.html', {
+        'tariffs': tariffs
+    })
+
+
+def order_detail(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Показывает детальную страницу заказа.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        pk: Идентификатор заказа.
+    Returns:
+        HttpResponse: Страница с подробной информацией о заказе.
+    """
 
     order = get_object_or_404(
 
@@ -259,7 +481,15 @@ def order_detail(request, pk):
 
 # pdf
 
-def get_pdf_font_name():
+def get_pdf_font_name() -> str:
+    """
+    Возвращает имя шрифта для генерации PDF.
+
+    Args:
+        None: Функция не принимает аргументы.
+    Returns:
+        str: Зарегистрированное имя шрифта ReportLab.
+    """
     font_path = Path('C:/Windows/Fonts/arial.ttf')
 
     if not font_path.exists():
@@ -273,7 +503,16 @@ def get_pdf_font_name():
     return font_name
 
 
-def order_pdf(request, pk):
+def order_pdf(request: HttpRequest, pk: int) -> HttpResponse:
+    """
+    Генерирует PDF-файл с информацией о заказе.
+
+    Args:
+        request: HTTP-запрос пользователя.
+        pk: Идентификатор заказа.
+    Returns:
+        HttpResponse: PDF-файл заказа.
+    """
 
     order = get_object_or_404(Order, pk=pk)
 

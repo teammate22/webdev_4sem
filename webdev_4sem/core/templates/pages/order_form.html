@@ -36,7 +36,7 @@
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-        <div class="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200">
+        <div class="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200" role="alert">
             {{ form.non_field_errors }}
         </div>
         {% endif %}
@@ -47,13 +47,17 @@
 
             <div class="{% if field.name == 'services' or field.name == 'receipt' %}md:col-span-2{% endif %}">
 
-                <label class="block text-sm font-medium text-gray-300 mb-2">
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
                     {{ field.label }}
                 </label>
 
                 {% if field.name == 'services' %}
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <fieldset class="grid grid-cols-1 sm:grid-cols-2 gap-3"{% if field.errors %} aria-describedby="{{ field.id_for_label }}-errors"{% endif %}>
+
+                    <legend class="sr-only">
+                        {{ field.label }}
+                    </legend>
 
                     {% for choice in field %}
 
@@ -72,7 +76,7 @@
 
                     {% endfor %}
 
-                </div>
+                </fieldset>
 
                 {% else %}
 
@@ -81,13 +85,13 @@
                 {% endif %}
 
                 {% if field.help_text %}
-                <p class="text-gray-500 text-sm mt-2">
+                <p id="{{ field.id_for_label }}-help" class="text-gray-500 text-sm mt-2">
                     {{ field.help_text }}
                 </p>
                 {% endif %}
 
                 {% if field.errors %}
-                <p class="text-red-400 text-sm mt-2">
+                <p id="{{ field.id_for_label }}-errors" class="text-red-400 text-sm mt-2" role="alert">
                     {{ field.errors }}
                 </p>
                 {% endif %}
